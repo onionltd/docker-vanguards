@@ -2,8 +2,6 @@ version: "3.3"
 services:
   tor:
     image: goldy/tor-hidden-service:v0.4.2.6-200900a
-    links:
-      - vanguards
     restart: always
     environment:
       HTTPD_TOR_SERVICE_HOSTS: 80:httpd:8080
@@ -13,6 +11,8 @@ services:
         DataDirectory /var/lib/tor/hidden_service
         ControlPort 0.0.0.0:9051
         HashedControlPassword 16:872860B76453A77D60CA2BB8C1A7042072093276A3D701AD684053EC4C
+    depends_on:
+      - httpd
 
   vanguards:
     image: localhost/vanguards:latest
@@ -43,3 +43,12 @@ services:
       BANGUARDS_CONN_MAX_DISCONNECTED_SECS: 15
       RENDGUARD_REND_USE_MAX_USE_TO_BW_RATIO: 5.0
       RENDGUARD_REND_USE_MAX_CONSENSUS_WEIGHT_CHURN: 1.0
+    depends_on:
+      - tor
+
+  httpd:
+    image: nginx:stable-alpine
+    restart: always
+    environment:
+      NGINX_HOST: localhost
+      NGINX_PORT: 80
