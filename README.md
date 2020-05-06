@@ -7,6 +7,6 @@ with
 ## Requirements
 
 * `goldy/tor-hidden-service > v0.4.2.6-200900a`
-* `vanguards > v0.3.1`
+* `vanguards >= v0.3.1`
 * `docker`
 
