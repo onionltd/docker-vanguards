@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import ipaddress
+import socket
+
 from os import environ
 from os import execvp
 from sys import argv
@@ -26,9 +29,26 @@ def to_config_string(config):
       result += "{} = {}\n".format(var, config[section][var])
   return result
 
+def resolve_hostname(hostname):
+  try:
+    _ = ipaddress.ip_address(hostname)
+  except ValueError:
+    try:
+      addr = socket.getaddrinfo(hostname, None, socket.AF_INET, socket.SOCK_STREAM, socket.IPPROTO_TCP)
+      return addr[0][4][0]
+    except socket.gaierror:
+      return None
+  return hostname
+
 def main():
   if "CONFIG_FILE" not in environ:
     raise Exception("CONFIG_FILE not defined")
+
+  if "GLOBAL_CONTROL_IP" in environ:
+    address = resolve_hostname(environ["GLOBAL_CONTROL_IP"])
+    if address is None:
+      raise Exception("GLOBAL_CONTROL_IP failed to resolve hostname")
+    environ["GLOBAL_CONTROL_IP"] = address
 
   for var in environ:
     section = match_config_section(var)
