@@ -31,6 +31,6 @@ WORKDIR /home/tor
 
 ENV CONFIG_FILE=/home/tor/.vanguards.conf
 
-ENTRYPOINT ["/entrypoint.py"]
+ENTRYPOINT ["python3", "/entrypoint.py"]
 
 CMD python3 /opt/vanguards/src/vanguards.py --config $CONFIG_FILE
