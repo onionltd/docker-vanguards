@@ -20,11 +20,6 @@ RUN apk add --no-cache git python3 gnupg py-setuptools \
 RUN addgroup -S -g 107 tor \
     && adduser -S -G tor -u 104 tor
 
-RUN mkdir -p /var/lib/tor/hidden_service \
-    && chown tor:tor /var/lib/tor/hidden_service
-
-VOLUME  ["/var/lib/tor/hidden_service/"]
-
 USER tor
 
 WORKDIR /home/tor
