@@ -2,7 +2,7 @@
 
 A docker image to run [vanguards](https://github.com/mikeperry-tor/vanguards) inside a container. Intended to run jointly
 with
-[docker-tor-hidden-service](https://github.com/cmehay/docker-tor-hidden-service).
+[docker-tor-hidden-service](https://github.com/onionltd/docker-tor-hidden-service).
 
 ## Requirements
 
