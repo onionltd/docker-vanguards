@@ -1,16 +1,17 @@
 version: "3.3"
 services:
   tor:
-    image: goldy/tor-hidden-service:v0.4.2.6-200900a
+    image: localhost/tor-hidden-service:v0.4.4.6
     restart: always
     environment:
       HTTPD_TOR_SERVICE_HOSTS: 80:httpd:8080
-      HTTPD_TOR_SERVICE_VERSION: 2
-      TOR_SOCKS_PORT: 0.0.0.0:9050
+      HTTPD_TOR_SERVICE_VERSION: 3
       TOR_EXTRA_OPTIONS: |
         DataDirectory /var/lib/tor/hidden_service
         ControlPort 0.0.0.0:9051
-        HashedControlPassword 16:872860B76453A77D60CA2BB8C1A7042072093276A3D701AD684053EC4C
+        CookieAuthentication 1
+    volumes:
+      - tor_volume:/var/lib/tor/hidden_service/
     depends_on:
       - httpd
 
@@ -20,7 +21,6 @@ services:
     environment:
       GLOBAL_CONTROL_IP: tor
       GLOBAL_CONTROL_PORT: 9051
-      GLOBAL_CONTROL_PASS: password1
       GLOBAL_ENABLE_VANGUARDS: "True"
       GLOBAL_ENABLE_BANDGUARDS: "True"
       GLOBAL_ENABLE_CBTVERIFY: "False"
@@ -43,6 +43,12 @@ services:
       BANGUARDS_CONN_MAX_DISCONNECTED_SECS: 15
       RENDGUARD_REND_USE_MAX_USE_TO_BW_RATIO: 5.0
       RENDGUARD_REND_USE_MAX_CONSENSUS_WEIGHT_CHURN: 1.0
+      RENDGUARD_REND_USE_CLOSE_CIRCUITS_ON_OVERUSE: "True"
+      RENDGUARD_REND_USE_GLOBAL_START_COUNT: 1000
+      RENDGUARD_REND_USE_RELAY_START_COUNT: 100
+      RENDGUARD_REND_USE_SCALE_AT_COUNT: 20000
+    volumes:
+      - tor_volume:/var/lib/tor/hidden_service/
     depends_on:
       - tor
 
@@ -50,5 +56,8 @@ services:
     image: nginx:stable-alpine
     restart: always
     environment:
-      NGINX_HOST: localhost
-      NGINX_PORT: 80
+      NGINX_HOST: 0.0.0.0
+      NGINX_PORT: 8080
+
+volumes:
+  tor_volume:
